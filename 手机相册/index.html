@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>手机相册</title>
+   
+    <style>
+    	*{
+    		margin:0;
+    		padding:0;
+    	}
+    	body{
+    		font-size: 0.15rem;
+    		font-family: "微软雅黑";
+    		background: #333;
+    	}
+    	a{
+    		text-decoration: none;
+    	}
+    	body{
+    		background: #000;
+    	}
+    	header{
+    		position: relative;
+    		height: 0.45rem;
+    		line-height: 0.45rem;
+    		color: #fff;
+    		text-align: center;
+    	}
+    	a.btn{
+    		position: absolute;
+    		top: 0.15rem;
+    		width: 0.5rem;
+    		height: 0.25rem;
+    		line-height: 0.25rem;
+    		box-shadow: 0 0 5px #000;
+    	}
+    	a.btn:nth-child(1){
+    		left: 15px;
+    		display: none;
+    	}
+    	a.btn:nth-child(2){
+    		right: 15px;
+    	}
+    	div{
+    		width: 1rem;
+    		height: 1rem;
+    		background:blue;
+    	}
+    	section{
+    		position:relative;
+    	}
+    	section ul li{
+    		position: absolute;
+    		list-style: none;
+    		width: 1rem;
+    		height: 1rem;
+    		border: 1px solid #ccc;
+    		box-sizing: border-box;
+    		background-size:100% 100%;
+    		transition: left 0.5s,top 0.5s;
+    	}
+    	footer{
+    		height: 0.45rem;
+    		line-height: .45rem;
+    		text-align: center;
+    		position: absolute;
+    		bottom: 0;
+    		left: 0;
+    		background: #333;
+    	}
+    	footer a{
+    		float: left;
+    		width: 1.5rem;
+    		border: 1px solid #ccc;
+    		box-sizing: border-box;
+    	}
+    </style>
+</head>
+<body style="overflow: hidden;">
+	<header>
+		<a href="#" class="btn">删除</a>
+		<a href="#" class="btn">选择</a>
+	</header>
+	<section style="overflow-y: auto;">
+		<ul>
+		</ul>
+	</section>
+	<footer>
+		<a href="#">所以相册</a>
+		<a href="#">选择相册</a>
+	</footer>
+	 <script type="text/javascript">
+    	document.getElementsByTagName("html")[0].style.fontSize=document.documentElement.clientWidth/3+"px";
+    	var hei=document.getElementsByTagName("header")[0].offsetHeight;
+  		document.getElementsByTagName("section")[0].style.height=document.documentElement.clientHeight-2*hei+"px";
+    </script>
+	 <script>
+    	var oUl=document.getElementsByTagName("ul")[0];
+    	var oBtn=document.getElementsByClassName("btn");
+    	
+    	var html="";
+    	var move=[];
+    	for(var i=1;i<=16;i++){
+    		html+="<li style='background-image:url(images/"+i+".jpg)'></li>"
+    	}
+    	oUl.innerHTML=html;
+    	var aLi=oUl.getElementsByTagName("li");
+    	function position(){
+    		for(var i=0;i<aLi.length;i++){
+    			aLi[i].style.left=i%3+"rem";
+    			aLi[i].style.top=Math.floor(i/3)+"rem";
+    		}
+    	}
+    	position();
+    	oBtn[1].addEventListener("touchend",select,false);
+    	oBtn[0].addEventListener("touchend",remove,false);
+    	var mark=true;
+    	function select(){
+    		if(mark){
+    			oBtn[1].innerHTML='取消';
+    			for(var i=0;i<aLi.length;i++){
+    				aLi[i].onOff=true;
+    				aLi[i].index=i;
+    				aLi[i].addEventListener("touchend",selectLi,false);
+    			}
+    		}else{
+    			oBtn[1].innerHTML='选择';
+    			oBtn[0].style.display="none";
+    			for(var i=0;i<aLi.length;i++){
+    				aLi[i].style.opacity=1;
+    				aLi[i].removeEventListener("touchend",selectLi,false);
+    			}
+    			//move.length=0;
+    		}
+    		mark=!mark; 
+    	}
+    	function remove(){
+//  		console.log(move,2);
+//  		move=move.sort(function(a,b){
+//  			return b-a;
+//  		})
+//  		//oUl.removeChild(aLi[move])
+//  		for(var i=0;i<move.length;i++){
+//  			oUl.removeChild(aLi[move.pop()]);
+//  		}
+//  		this.style.display="none";
+//  		mark=false;
+//  		select();
+//  		position();
+//  		move.length=0;
+			move=move.sort(function(a,b){
+			  			return a-b;
+			});
+			while(move.length){
+				oUl.removeChild(aLi[move.pop()]);
+			}
+//			for(var i=0;i<move.length;i++){
+//			  			
+//			  		}
+			this.style.display="none";
+	  		mark=false;
+	  		select();
+	  		position();
+    	};
+    	function selectLi(){
+    		if(this.onOff){
+    			move.push(this.index);
+    			this.style.opacity=0.2;
+    			oBtn[0].style.display="block";
+    		}else{
+    			this.style.opacity=1;
+    			for(var i=0;i<move.length;i++){
+    				if(move[i]==this.index){
+    					move.splice(i,1);
+    				}
+    			}
+    		}
+    		this.onOff=!this.onOff;
+    	}
+    </script>
+    
+</body>
+</html>
